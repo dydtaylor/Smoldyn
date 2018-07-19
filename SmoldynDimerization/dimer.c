@@ -21,9 +21,6 @@ gcc dimer.o -o dimer -lsmoldyn_shared
 //Function to Build each simulation
 simptr newSim(double worldLength, int n, double rBind, double kOff, double monoD, double dimerD, double dt, double endT, double rndSeed){
 	simptr mainSim;
-	double roiParams[] = {0.0,0.0,1,30};
-	double insideRoi[] = {0.0,0.0};
-	
 	double highBounds[] = {worldLength/2,worldLength/2};
 	double lowBounds[] = {-worldLength/2,-worldLength/2};
 	
@@ -71,19 +68,13 @@ simptr newSim(double worldLength, int n, double rBind, double kOff, double monoD
 	smolAddReaction(mainSim, "unbinding", dimer, MSsoln, NULL , MSnone, 2,(const char**) unbindProducts, outputStates, kOff);
 	//smolSetReactionProducts(mainSim,"unbinding",RPpgem,.2,NULL,NULL);
 	
-	//RoI surface + compartment
-	smolAddSurface(mainSim, "roi");
-	smolAddPanel(mainSim, "roi", PSsph, NULL, "+0", roiParams);
-	smolSetSurfaceAction(mainSim, "roi", PFboth, "all", MSall, SAtrans);
-	smolAddCompartment(mainSim,"roiComp");
-	smolAddCompartmentSurface(mainSim,"roiComp","roi");
-	smolAddCompartmentPoint(mainSim,"roiComp",insideRoi);
 	smolUpdateSim(mainSim);
 	
 	return mainSim;
 }
 
 int main(int argc, char *argv[]){
+	//argv format: dt, world length (sqrt of the area), number of particles, unbinding rate, binding radius, Verbosity (1 gives complete time series, 0 gives just parameters for equilibrium measurement), output file
 	double dt = strtod(argv[1],NULL);
 	double sysSize = strtod(argv[2],NULL); //Length of one side of the box
 	double sampleSize = strtod(argv[3],NULL);
@@ -105,7 +96,7 @@ int main(int argc, char *argv[]){
 	
 	if(verbosity == 1){
 		randomSeed = RAND;
-		simptr simRun = newSim(sysSize,sampleSize,rBind,kOff,monoDiffuse,dimerDiffuse,dt,tBreak, randomSeed);
+		simptr simRun = newSim(sysSize, sampleSize,rBind,kOff,monoDiffuse,dimerDiffuse,dt,tBreak, randomSeed);
 		//smolDisplaySim(simRun);
 		smolUpdateSim(simRun);
 		nSteps = ceil(tBreak/dt);
@@ -120,7 +111,7 @@ int main(int argc, char *argv[]){
 	
 	if(verbosity == 0){
 		randomSeed = RAND;
-		simptr simRun = newSim(sysSize,sampleSize,rBind,kOff,monoDiffuse,dimerDiffuse,dt,tEnd, randomSeed);
+		simptr simRun = newSim(sysSize, sampleSize,rBind,kOff,monoDiffuse,dimerDiffuse,dt,tEnd, randomSeed);
 		//smolDisplaySim(simRun);
 		nSteps1 = ceil(tBreak/dt);
 		nSteps2 = ceil(tEnd/dt);
