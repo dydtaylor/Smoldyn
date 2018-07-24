@@ -74,19 +74,19 @@ simptr newSim(double worldLength, int n, double rBind, double kOff, double monoD
 }
 
 int main(int argc, char *argv[]){
-	//argv format: dt, world length (sqrt of the area), number of particles, unbinding rate, binding radius, Verbosity (1 gives complete time series, 0 gives just parameters for equilibrium measurement), output file
+	//argv format: dt, tChar, world length (sqrt of the area), number of particles, unbinding rate, binding radius, Verbosity (1 gives complete time series, 0 gives just parameters for equilibrium measurement), output file
 	double dt = strtod(argv[1],NULL);
-	double sysSize = strtod(argv[2],NULL); //Length of one side of the box
-	double sampleSize = strtod(argv[3],NULL);
-	double kOff = strtod(argv[4],NULL);
-	double rBind = strtod(argv[5],NULL);
-	int verbosity = atoi(argv[6]);
-	FILE* outputFile = fopen(argv[7],"a+");
+	double tChar = strtod(argv[2],NULL);
+	double sysSize = strtod(argv[3],NULL); //Length of one side of the box
+	double sampleSize = strtod(argv[4],NULL);
+	double kOff = strtod(argv[5],NULL);
+	double rBind = strtod(argv[6],NULL);
+	int verbosity = atoi(argv[7]);
+	FILE* outputFile = fopen(argv[8],"a+");
 	double monomerCount,dimerCount;
 	double nSteps, nSteps1, nSteps2;
 	long randomSeed;
 	RanInitReturnIseed(0);
-	double tChar = 1/(8*PI*rBind)* pow(sampleSize/pow(sysSize,2),1.5);
 	double tBreak = 3*tChar;
 	double tEnd = 15*tChar;
 	
